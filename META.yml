@@ -1,0 +1,15 @@
+---
+name: Catalyst-Plugin-Params-Nested
+version: 0.01
+author: ~
+abstract: Nested form parameters (ala Ruby on Rails).
+license: perl
+requires:
+  Catalyst: 5.49
+  Test::MockObject: 1.01
+  perl: 5.8.1
+provides:
+  Catalyst::Plugin::Params::Nested:
+    file: lib/Catalyst/Plugin/Params/Nested.pm
+    version: 0.01
+generated_by: Module::Build version 0.2611
