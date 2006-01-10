@@ -9,6 +9,7 @@ my $build = Module::Build->new(
         'perl'             => '5.8.1',
         'Catalyst'         => '5.49',
         'Test::MockObject' => '1.01',
+        'CGI::Expand'      => '1.06',
     },
     create_readme => 1,
     sign          => 1,

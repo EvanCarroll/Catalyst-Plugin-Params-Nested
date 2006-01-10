@@ -16,8 +16,8 @@ SYNOPSIS
         # turns params into hashrefs: 
 
         $c->req->param('foo')->{bar};
-       
-        $c->req->params({
+           
+    $c->req->params({
             # extra params
             foo => {
                 bar => ...,
@@ -28,7 +28,7 @@ SYNOPSIS
             'foo[bar]' => ...,
             'foo.gorch' => ...,
         });
-    
+
 DESCRIPTION
     Ruby on Rails has a nice feature to create nested parameters that help
     with the organization of data in a form - parameters can be an
@@ -59,7 +59,7 @@ CAVEATS
     No attempt is made to merge data intelligently. If you do this:
 
         <input name="foo" />
-        <input name="foo.bar" }
+        <input name="foo.bar" />
 
     the "foo" parameter will stay untouched, and you'll have to access
     "foo.bar" using its full string name:
@@ -75,4 +75,7 @@ COPYRIGHT & LICENSE
             Copyright (c) 2005 the aforementioned authors. All rights
             reserved. This program is free software; you can redistribute
             it and/or modify it under the same terms as Perl itself.
+
+SEE ALSO
+    CGI::Expand
 

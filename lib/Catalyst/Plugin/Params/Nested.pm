@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+	my ( $self, $c ) = @_;
 
 package Catalyst::Plugin::Params::Nested;
 
@@ -6,8 +7,9 @@ use strict;
 use warnings;
 
 use NEXT;
+use Catalyst::Plugin::Params::Nested::Expander ();
 
-our $VERSION = "0.01";
+our $VERSION = "0.02";
 
 sub prepare_parameters {
     my $c = shift;
@@ -15,31 +17,10 @@ sub prepare_parameters {
 
     my $params = $c->req->params;
 
-    param: foreach my $param ( keys %$params ) {
-        my @slice;
-
-        if ( $param =~ /\./ ) {
-            @slice = split /\./, $param;
-        } elsif ( $param =~ /^(\w+)\[/ ) {
-            @slice = $1;
-            push @slice, ($param =~ /\[ (\w+) \]/gx);
-        } else {
-            next param;
-        };
-        next param unless @slice > 1;
-        
-        my $cursor = $params;
-        my $leaf = pop @slice;
-        while ( @slice ) {
-            my $step = shift @slice;
-
-            no warnings 'uninitialized';
-            next param if exists $cursor->{$step} and ref($cursor->{$step}) ne "HASH";
-
-            $cursor = $cursor->{$step} ||= {};
-        }
-        $cursor->{$leaf} = $params->{$param};
-    }
+    %$params = (
+        %$params,
+        %{ Catalyst::Plugin::Params::Nested::Expander->expand_hash( $params ) },
+    );
 
     $ret;
 }
@@ -129,7 +110,7 @@ post factum.
 No attempt is made to merge data intelligently. If you do this:
 
     <input name="foo" />
-    <input name="foo.bar" }
+    <input name="foo.bar" />
 
 the C<foo> parameter will stay untouched, and you'll have to access C<foo.bar>
 using its full string name:
@@ -147,6 +128,10 @@ Jess Robinson
         Copyright (c) 2005 the aforementioned authors. All rights
         reserved. This program is free software; you can redistribute
         it and/or modify it under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+L<CGI::Expand>
 
 =cut
 

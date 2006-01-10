@@ -5,6 +5,7 @@ WriteMakefile
           'NAME' => 'Catalyst::Plugin::Params::Nested',
           'VERSION_FROM' => 'lib/Catalyst/Plugin/Params/Nested.pm',
           'PREREQ_PM' => {
+                           'CGI::Expand' => '1.06',
                            'Catalyst' => '5.49',
                            'Test::MockObject' => '1.01'
                          },
