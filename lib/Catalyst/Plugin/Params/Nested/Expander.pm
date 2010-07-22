@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 package Catalyst::Plugin::Params::Nested::Expander;
 use base qw/CGI::Expand/;
 
@@ -9,9 +7,9 @@ use warnings;
 sub split_name {
     my ( $class, $name ) = @_;
 
-    if ( $name =~ /^ \w+ \[/x ) {
+    if ( $name =~ /^ .*? \[ \S+ \]/x ) {
         return grep { defined } ( $name =~ /
-            ^  (\w+)      # root param
+          ^  (\w+)      # root param
           | \[ (\w+) \] # nested
         /gx );
     } else {

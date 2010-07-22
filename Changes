@@ -1,2 +1,4 @@
+- 0.03  2010-7-22 some_time
+        - Fixed RT:59604 `param[]` causing copy to `param` (ECARROLL)
 - 0.02  2006-1-10 15:35:00
         - Use CGI::Expand instead of reinventing
