@@ -1,0 +1,29 @@
+---
+abstract: 'Nested form parameters (ala Ruby on Rails).'
+author:
+  - 'Yuval Kogman, C<nothingmuch@woobling.org>'
+build_requires:
+  ExtUtils::MakeMaker: 6.42
+  Test::MockObject: 1.01
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
+distribution_type: module
+generated_by: 'Module::Install version 0.99'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Catalyst-Plugin-Params-Nested
+no_index:
+  directory:
+    - inc
+    - t
+requires:
+  CGI::Expand: 1.06
+  Catalyst: 5.49
+  MRO::Compat: 0
+  perl: 5.8.1
+resources:
+  license: http://dev.perl.org/licenses/
+  repository: http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Plugin-Params-Nested
+version: 0.04
