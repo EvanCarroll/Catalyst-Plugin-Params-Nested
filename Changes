@@ -1,9 +1,15 @@
+- 0.05 2010-09-03 
+  - Removed depedencies on Test::MockObject (ECARROLL)
+      - isn't building anyway, because of UNIVERSAL::can [rt:61032]
+      - isn't used by Catalyst proper
+  - Rewrote all existing tests to use Catalyst::Test (ECARROLL)
+
 - 0.04 2010-07-28 22:31:44
-        - Fixed RT:59604 `param[]` causing copy to `param` (ECARROLL)
+  - Fixed RT:59604 `param[]` causing copy to `param` (ECARROLL)
 
 - 0.03  2010-04-14 22:45:00
-        - Update to change NEXT to MRO::Compat
-        - Change Module::Build to Module::Install
+  - Update to change NEXT to MRO::Compat
+  - Change Module::Build to Module::Install
 
 - 0.02  2006-1-10 15:35:00
-        - Use CGI::Expand instead of reinventing
+  - Use CGI::Expand instead of reinventing

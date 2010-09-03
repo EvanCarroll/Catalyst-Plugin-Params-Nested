@@ -1,58 +1,83 @@
-#!/usr/bin/perl
-
+#!/usr/bin/env perl
 use strict;
 use warnings;
+use FindBin '$Bin';
+use lib "$Bin/lib";
 
-use Test::More tests => 9;
-use Test::MockObject::Extends;
-use Test::MockObject;
+use Catalyst::Test qw/TestAppCPPN/;
 
-my $m; BEGIN { use_ok($m = "Catalyst::Plugin::Params::Nested") }
+use Test::More tests => 8;
 
-my $c = Test::MockObject::Extends->new( $m );
+{
+	my ( $res, $c ) = ctx_request('get_params');
+	is_deeply( $c->req->params, {}, "no params");
+}
 
-$c->set_always( req => my $req = Test::MockObject->new );
-$req->set_always( params => my $params = {} );
-$req->mock(
-  param => sub {
-    my $self = shift;
-    return keys %$params unless @_;
-    my $value = $params->{shift()};
-    # copied from CGI.pm
-    return defined($value) ? (ref($value) && ref($value) eq 'ARRAY' ? @{$value} : $value) : ();
-  }
-);
+{
+	my ( $res, $c ) = ctx_request('get_params?foo=1');
+	is_deeply( $c->req->params, { foo => 1 }, "params not touched");
+}
 
-$c->prepare_parameters;
-is_deeply( $params, {}, "no params");
+{
+	my ( $res, $c ) = ctx_request('get_params?foo[]=1');
+	is_deeply(
+		$c->req->params
+		, { 'foo[]' => 1 }
+		, "Empty first-level param not touched"
+	);
+}
 
-%$params = ( foo => 1 );
-$c->prepare_parameters;
-is_deeply( $params, { foo => 1 }, "params not touched");
+{
+	my ( $res, $c ) = ctx_request('get_params?foo[bar]=1');
+	is_deeply(
+		$c->req->params
+		, { 'foo[bar]' => 1, 'foo' => { bar => 1 } }
+		, "params expanded 1 level deep"
+	);
+}
 
-%$params = ( 'foo[bar]' => 1 );
-$c->prepare_parameters;
-is_deeply( $params, { 'foo[bar]' => 1, 'foo' => { bar => 1 } }, "params expanded 1 level deep");
+{
+	my ( $res, $c ) = ctx_request('get_params?foo[bar][gorch]=1');
+	is_deeply(
+		$c->req->params
+		, { 'foo[bar][gorch]' => 1, 'foo' => { bar => { gorch => 1 } } }
+		, "params expanded 2 levels deep"
+	);
+}
 
-%$params = ( 'foo[]' => 1 );
-$c->prepare_parameters;
-is_deeply( $params, { 'foo[]' => 1 }, "Empty first-level param not touched");
+{
+	my ( $res, $c ) = ctx_request('get_params?foo[bar][gorch]=1&foo[bar][baz]=2');
+	is_deeply(
+		$c->req->params
+		, {
+			'foo[bar][baz]' => 2
+			, 'foo[bar][gorch]' => 1
+			, 'foo' => { bar => { gorch => 1, baz => 2 } }
+		}
+		, "params expanded 2 levels deep, multiple subkeys"
+	);
+}
 
-%$params = ( 'foo[bar][gorch]' => 1 );
-$c->prepare_parameters;
-is_deeply( $params, { 'foo[bar][gorch]' => 1, 'foo' => { bar => { gorch => 1 } } }, "params expanded 2 levels deep");
+{
+	my ( $res, $c ) = ctx_request('get_params?foo.bar.gorch=1&foo.bar.baz=2');
+	is_deeply(
+		$c->req->params
+		, {
+			'foo.bar.baz' => 2
+			, 'foo.bar.gorch' => 1
+			, 'foo' => { bar => { gorch => 1, baz => 2 } }
+		}
+		, "params expanded 2 levels deep, multiple subkeys, dot notation"
+	);
+}
 
+{
+	my ( $res, $c ) = ctx_request('get_params?submit=1&submit.x=2&submit.y=3');
+	is_deeply(
+		$c->req->params
+		, { submit => 1, 'submit.x' => 2, 'submit.y' => 3 }
+		, "params did not expand /\.[xy]$/"
+	);
+}
 
-
-%$params = ( 'foo[bar][gorch]' => 1, 'foo[bar][baz]' => 2 );
-$c->prepare_parameters;
-is_deeply( $params, { 'foo[bar][baz]' => 2, 'foo[bar][gorch]' => 1, 'foo' => { bar => { gorch => 1, baz => 2 } } }, "params expanded 2 levels deep, multiple subkeys");
-
-%$params = ( 'foo.bar.gorch' => 1, 'foo.bar.baz' => 2 );
-$c->prepare_parameters;
-is_deeply( $params, { 'foo.bar.baz' => 2, 'foo.bar.gorch' => 1, 'foo' => { bar => { gorch => 1, baz => 2 } } }, "params expanded 2 levels deep, multiple subkeys, dot notation");
-
-%$params = ( 'submit' => 1, 'submit.x' => 2, 'submit.y' => 3 );
-$c->prepare_parameters;
-is_deeply( $params, { submit => 1, 'submit.x' => 2, 'submit.y' => 3 },
-           "params did not expand /\.[xy]$/" );
+1;
