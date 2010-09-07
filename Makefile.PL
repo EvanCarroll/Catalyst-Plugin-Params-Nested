@@ -12,7 +12,7 @@ if ($Module::Install::AUTHOR) {
 }
 
 requires 'Catalyst'         => '5.49';
-test_requires 'Catalyst::Text';
+test_requires 'Catalyst::Test';
 requires 'CGI::Expand'      => '1.06';
 requires 'MRO::Compat';
 
